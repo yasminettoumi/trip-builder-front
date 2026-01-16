@@ -1,0 +1,82 @@
+<div class="page">
+  <div class="search-card">
+    <h2>Search flights</h2>
+
+    <form [formGroup]="form" (ngSubmit)="search()">
+
+      <div class="row">
+        <div class="field">
+          <label>From</label>
+          <select formControlName="from">
+            <option value="">Select airport</option>
+            <option *ngFor="let a of airports" [value]="a.code">
+              {{ a.city }} ({{ a.code }})
+            </option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>To</label>
+          <select formControlName="to">
+            <option value="">Select airport</option>
+            <option *ngFor="let a of airports" [value]="a.code">
+              {{ a.city }} ({{ a.code }})
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Departure date</label>
+          <input type="date" formControlName="departure_date" />
+        </div>
+
+        <div class="field">
+          <label>Trip type</label>
+          <select formControlName="type">
+            <option value="one_way">One-way</option>
+            <option value="round_trip">Round-trip</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="form.invalid">
+        Search trip
+      </button>
+
+    </form>
+    <div *ngIf="loading" class="loading">
+  Searching flights...
+</div>
+
+<div *ngIf="error" class="error">
+  {{ error }}
+</div>
+
+<div *ngIf="trip" class="result-card">
+  <h3>Trip result</h3>
+
+  <p class="price">
+    Total price: <strong>{{ trip.total_price | currency:'USD' }}</strong>
+  </p>
+
+  <div class="flight" *ngFor="let f of trip.flights">
+    <div class="flight-row">
+      <strong>{{ f.airline.name }} {{ f.airline.code }}{{ f.number }}</strong>
+    </div>
+
+    <div class="flight-row">
+      {{ f.departure_airport.city }} ({{ f.departure_airport.code }})
+      →
+      {{ f.arrival_airport.city }} ({{ f.arrival_airport.code }})
+    </div>
+
+    <div class="flight-row time">
+      {{ f.departure_time }} → {{ f.arrival_time }}
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+
