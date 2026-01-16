@@ -1,69 +1,88 @@
-<div class="page">
-  <div class="search-card">
-    <h2>Search flights</h2>
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-    <form [formGroup]="form" (ngSubmit)="search()">
+<div class="card search-card">
 
-      <div class="row">
-        <div class="field">
-          <label>From</label>
-          <select formControlName="from">
-            <option value="">Select airport</option>
-            <option *ngFor="let a of airports" [value]="a.code">
-              {{ a.city }} ({{ a.code }})
-            </option>
-          </select>
-        </div>
+  <form [formGroup]="form" (ngSubmit)="search()" class="search-form">
 
-        <div class="field">
-          <label>To</label>
-          <select formControlName="to">
-            <option value="">Select airport</option>
-            <option *ngFor="let a of airports" [value]="a.code">
-              {{ a.city }} ({{ a.code }})
-            </option>
-          </select>
-        </div>
-      </div>
+    <div class="field">
+      <label><i class="fa-solid fa-plane-departure"></i> From</label>
+      <select formControlName="from">
+        <option value="">Select departure</option>
+        <option *ngFor="let a of airports" [value]="a.code">
+          {{ a.city }} ({{ a.code }})
+        </option>
+      </select>
+    </div>
 
-      <div class="row">
-        <div class="field">
-          <label>Departure date</label>
-          <input type="date" formControlName="departure_date" />
-        </div>
+    <div class="field">
+      <label><i class="fa-solid fa-plane-arrival"></i> To</label>
+      <select formControlName="to">
+        <option value="">Select destination</option>
+        <option *ngFor="let a of airports" [value]="a.code">
+          {{ a.city }} ({{ a.code }})
+        </option>
+      </select>
+    </div>
 
-        <div class="field">
-          <label>Trip type</label>
-          <select formControlName="type">
-            <option value="one_way">One-way</option>
-            <option value="round_trip">Round-trip</option>
-          </select>
-        </div>
-      </div>
+    <div class="field">
+  <label>
+    <i class="fa-regular fa-calendar"></i> Departure 
+  </label>
+  <input type="date"
+         formControlName="departure_date"
+         [min]="today" />
+</div>
 
+    <div class="field" *ngIf="form.value.type === 'round_trip'">
+      <label><i class="fa-regular fa-calendar-check"></i> Return</label>
+      <input type="date" formControlName="return_date" />
+    </div>
+
+    <div class="field">
+      <label><i class="fa-solid fa-route"></i> Trip type</label>
+      <select formControlName="type">
+        <option value="one_way">One-way</option>
+        <option value="round_trip">Round-trip</option>
+      </select>
+    </div>
+
+    <div class="field search-btn">
       <button type="submit" [disabled]="form.invalid">
-        Search trip
+        <i class="fa-solid fa-magnifying-glass"></i> Search
       </button>
+    </div>
 
-    </form>
-    <div *ngIf="loading" class="loading">
-  Searching flights...
+  </form>
+
+  <div *ngIf="loading" class="loading">
+    <i class="fa-solid fa-spinner fa-spin"></i> Searching flights...
+  </div>
+
+  <div *ngIf="error" class="error">
+    <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+  </div>
+
 </div>
+<div *ngIf="trip" class="card result-card">
 
-<div *ngIf="error" class="error">
-  {{ error }}
-</div>
-
-<div *ngIf="trip" class="result-card">
-  <h3>Trip result</h3>
+  <h3>
+    <i class="fa-solid fa-suitcase-rolling"></i>
+    Trip summary
+  </h3>
 
   <p class="price">
-    Total price: <strong>{{ trip.total_price | currency:'USD' }}</strong>
+    <i class="fa-solid fa-dollar-sign"></i>
+    Total price:
+    <strong>{{ trip.total_price | currency:'USD' }}</strong>
   </p>
 
   <div class="flight" *ngFor="let f of trip.flights">
     <div class="flight-row">
-      <strong>{{ f.airline.name }} {{ f.airline.code }}{{ f.number }}</strong>
+      <strong>
+        <i class="fa-solid fa-plane"></i>
+        {{ f.airline.name }} {{ f.airline.code }}{{ f.number }}
+      </strong>
     </div>
 
     <div class="flight-row">
@@ -73,10 +92,14 @@
     </div>
 
     <div class="flight-row time">
+      <i class="fa-regular fa-clock"></i>
       {{ f.departure_time }} → {{ f.arrival_time }}
     </div>
   </div>
-</div>
-  </div>
-</div>
 
+</div>
+<a *ngIf="trip"
+   [routerLink]="['/trips', trip.trip_id]"
+   class="details-link">
+  View trip details →
+</a>

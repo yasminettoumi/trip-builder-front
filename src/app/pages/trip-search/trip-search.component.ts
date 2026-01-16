@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { ApiService } from '../../services/api.service';
+import { RouterModule } from '@angular/router';
 
 interface Airport {
   code: string;
@@ -17,7 +18,7 @@ interface TripResult {
 @Component({
   selector: 'app-trip-search',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,  RouterModule],
   templateUrl: './trip-search.component.html',
   styleUrls: ['./trip-search.component.css']
 })
@@ -28,16 +29,22 @@ export class TripSearchComponent implements OnInit {
   trip: TripResult | null = null;
   loading = false;
   error: string | null = null;
+  today!: string;
+
   constructor(
     private fb: FormBuilder,
     private api: ApiService
   ) {}
 
   ngOnInit(): void {
+    const todayDate = new Date();
+    this.today = todayDate.toISOString().split('T')[0]; 
+    
     this.form = this.fb.group({
       from: ['', Validators.required],
       to: ['', Validators.required],
       departure_date: ['', Validators.required],
+      return_date: [''],
       type: ['one_way', Validators.required]
     });
 

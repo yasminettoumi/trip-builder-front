@@ -1,0 +1,54 @@
+<link rel="stylesheet"
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+ <div *ngIf="loading" class="loading">
+  <i class="fa-solid fa-spinner fa-spin"></i> Loading trip...
+</div>
+
+<div *ngIf="error" class="error">
+  <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+</div>
+
+<div *ngIf="trip" class="card trip-card">
+
+  <!-- HEADER -->
+  <div class="trip-header">
+    <div class="trip-type">
+      <i class="fa-solid fa-route"></i>
+      {{ trip.type === 'round_trip' ? 'Round-trip' : 'One-way' }}
+    </div>
+
+    <div class="trip-price">
+      <i class="fa-solid fa-dollar-sign"></i>
+      {{ trip.total_price | currency:'USD' }}
+    </div>
+  </div>
+
+  <!-- FLIGHTS -->
+  <div class="flight" *ngFor="let f of trip.flights">
+
+    <div class="flight-header">
+      <i class="fa-solid fa-plane"></i>
+      <strong>{{ f.airline.name }} {{ f.airline.code }}{{ f.number }}</strong>
+    </div>
+
+    <div class="flight-row">
+      <i class="fa-regular fa-calendar"></i>
+      {{ f.pivot.departure_date | date:'longDate' }}
+    </div>
+
+    <div class="flight-row">
+      <i class="fa-solid fa-location-dot"></i>
+      {{ f.departure_airport.city }} ({{ f.departure_airport.code }})
+      →
+      {{ f.arrival_airport.city }} ({{ f.arrival_airport.code }})
+    </div>
+
+    <div class="flight-row time">
+      <i class="fa-regular fa-clock"></i>
+      {{ f.departure_time }} → {{ f.arrival_time }}
+    </div>
+
+  </div>
+
+</div>
+
